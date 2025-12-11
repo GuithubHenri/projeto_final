@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -22,6 +23,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -114,3 +116,25 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# config/settings.py (Adicionar no final do arquivo)
+
+JAZZMIN_SETTINGS = {
+    "site_header": "LoadPro",
+    "site_brand": "LoadPro",
+    #"site_logo": "img/logo.png", # Se você tiver um logo
+    "copyright": "Senac RJ",
+    "welcome_sign": "Bem-vindo ao Painel de Administração.",
+    # Outras customizações de UI...
+}
+
+# -----------------
+# CONFIGURAÇÕES DE ARQUIVOS ESTÁTICOS
+# -----------------
+
+# O diretório onde o 'collectstatic' VAI COPIAR todos os arquivos estáticos.
+# Esta pasta DEVE SER diferente da pasta STATICFILES_DIRS
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+
+# Opcional: Diretórios adicionais onde o Django deve procurar arquivos estáticos
+STATICFILES_DIRS = []
