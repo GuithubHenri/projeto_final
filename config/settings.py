@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-i+77csy=c0rb%26&k1*f_@=nytm*pnll-+f0_e^xjn4h$1-t6s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localst']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -94,9 +94,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -130,10 +130,10 @@ JAZZMIN_SETTINGS = {
 
 # O diretório onde o 'collectstatic' VAI COPIAR todos os arquivos estáticos.
 # Esta pasta DEVE SER diferente da pasta STATICFILES_DIRS
-#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Opcional: Diretórios adicionais onde o Django deve procurar arquivos estáticos
 STATICFILES_DIRS = []
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/meus-pedidos/'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'

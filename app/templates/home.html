@@ -1,17 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="neon-card p-5 text-center">
-  <h2>Bem-vindo ao <span style="color:var(--primary)">LoadPro</span></h2>
-  <p class="mt-3 text-muted">
-    Sistema inteligente de logística e rastreamento de entregas.
+<div style="text-align: center; padding: 80px 20px;">
+    
+  <h2 style="font-size: 3em; margin-bottom: 10px;">Bem-vindo ao <span style="color:#00d4ff">LoadPro</span></h2>
+  <p style="color: #888; font-size: 1.2em; max-width: 600px; margin: 0 auto;">
+    Sistema inteligente de logística e rastreamento de entregas em tempo real.
   </p>
 
-  <div style="margin-top:30px">
-    <a href="{% url 'consulta' %}" class="btn-neon">Rastrear Pedido</a>
-    <a href="{% url 'login' %}" class="btn-neon" style="margin-left:10px">
+  <div style="margin-top: 50px;">
+    <a href="{% url 'consulta' %}" style="background: #00d4ff; color: #000; padding: 15px 30px; font-weight: bold; border-radius: 5px; margin-right: 15px;">
+        Rastrear Pedido
+    </a>
+    <a href="{% url 'login' %}" style="border: 1px solid #00d4ff; color: #00d4ff; padding: 15px 30px; font-weight: bold; border-radius: 5px;">
       Área Interna
     </a>
   </div>
+
 </div>
 {% endblock %}
