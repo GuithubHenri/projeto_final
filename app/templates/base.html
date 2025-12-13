@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LoadPro • Sistema de Logística{% endblock %}</title>
+
+    <!-- Fonte futurista -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="{% static 'css/neon.css' %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- GLOW BACKGROUND -->
+    <div class="neon-bg"></div>
+
+    <!-- NAVBAR -->
+    <header class="neon-header">
+        <div class="container">
+            <h1 class="logo">LOAD<span>PRO</span></h1>
+
+            <nav>
+                <ul class="menu">
+                    <li><a href="{% url 'home' %}">Início</a></li>
+                    <li><a href="{% url 'consulta' %}">Rastreio</a></li>
+                  
+                    {% if user.is_authenticated %}
+                      <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                      <li><a href="{% url 'logout' %}">Sair</a></li>
+                    {% else %}
+                      <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                  </ul>
+                  
+            </nav>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO -->
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="neon-footer">
+        <p>© 2025 • LoadPro • Sistema de Logística e Rastreamento</p>
+    </footer>
+
+    <!-- JS global -->
+    <script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>

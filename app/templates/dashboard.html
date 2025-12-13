@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Dashboard • LoadPro{% endblock %}
+
+{% block content %}
+
+<section class="dashboard">
+
+    <!-- 🔢 CARDS DE INDICADORES -->
+    <div class="dashboard-cards">
+
+        <div class="card neon-card">
+            <span class="card-label">Total de Pedidos</span>
+            <div class="fs-3 fw-bold">{{ total }}</div>
+        </div>
+
+        <div class="card neon-card warning">
+            <span class="card-label">Pendentes</span>
+            <div class="fs-3 fw-bold text-warning">{{ pendentes }}</div>
+        </div>
+
+        <div class="card neon-card danger">
+            <span class="card-label">Atrasados</span>
+            <div class="fs-3 fw-bold text-danger">{{ atrasos }}</div>
+        </div>
+
+    </div>
+
+    <!-- 📋 LISTA DE ÚLTIMOS PEDIDOS -->
+    <div class="dashboard-table">
+        <h2>Últimos Pedidos</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Cliente</th>
+                    <th>Status</th>
+                    <th>Atualizado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in ultimas %}
+                <tr>
+                    <td>{{ pedido.codigo }}</td>
+                    <td>{{ pedido.cliente.nome }}</td>
+                    <td>{{ pedido.status }}</td>
+                    <td>{{ pedido.atualizado_em|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Nenhum pedido encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+{% endblock %}

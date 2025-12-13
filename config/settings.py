@@ -1,8 +1,5 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,7 +130,10 @@ JAZZMIN_SETTINGS = {
 
 # O diretório onde o 'collectstatic' VAI COPIAR todos os arquivos estáticos.
 # Esta pasta DEVE SER diferente da pasta STATICFILES_DIRS
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 
 # Opcional: Diretórios adicionais onde o Django deve procurar arquivos estáticos
 STATICFILES_DIRS = []
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/meus-pedidos/'
+LOGOUT_REDIRECT_URL = '/login/'

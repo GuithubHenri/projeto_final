@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Rastrear Pedido — LoadPro{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7 col-md-9">
+    <div class="neon-card p-4">
+      <h2 class="h4 mb-3 text-center">Rastreie sua entrega</h2>
+
+      <form method="get" class="mb-3">
+        <div class="input-group input-group-lg">
+          <input name="codigo" value="{{ request.GET.codigo|default_if_none:'' }}" type="text" class="form-control neon-input" placeholder="Código ex: LP123456789" autofocus>
+          <button class="btn btn-neon">Rastrear</button>
+        </div>
+      </form>
+
+      {% if resultado %}
+      <div class="mt-4">
+        <div class="status-box">
+          <div class="status-title">Status</div>
+          <div class="status-value">{{ resultado.status }}</div>
+        </div>
+
+        <div class="mt-3 timeline">
+          {% for evento in resultado.timeline %}
+          <div class="timeline-item">
+            <div class="time">{{ evento.criado_em|date:"d/m/Y H:i" }}</div>
+            <div class="desc">{{ evento.descricao }}</div>
+          </div>
+          {% empty %}
+          <p class="text-muted">Sem histórico disponível.</p>
+          {% endfor %}
+        </div>
+      </div>
+      {% elif request.GET.codigo %}
+      <div class="alert alert-warning mt-3">Código não encontrado.</div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}
