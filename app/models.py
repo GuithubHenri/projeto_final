@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-import uuid # Necessário para gerar códigos únicos
+import uuid
+import random  # 🔹 NOVO: para simular rastreio real
+
 
 # ==========================
 # PERFIL DO USUÁRIO (NÍVEL)
@@ -34,7 +36,15 @@ class Perfil(models.Model):
 @receiver(post_save, sender=User)
 def criar_perfil(sender, instance, created, **kwargs):
     if created:
-        Perfil.objects.create(usuario=instance)
+        if instance.is_superuser:
+            nivel = 'ADMIN'
+        else:
+            nivel = 'USER'
+
+        Perfil.objects.create(
+            usuario=instance,
+            nivel=nivel
+        )
 
 
 # ==========================
@@ -76,8 +86,8 @@ class Pedido(models.Model):
     codigo = models.CharField(
         max_length=20,
         unique=True,
-        blank=True, # Permite deixar vazio para gerar automático
-        editable=False # Impede edição manual após criado
+        blank=True,
+        editable=False
     )
 
     cliente = models.ForeignKey(
@@ -106,36 +116,58 @@ class Pedido(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
+    # 🔹 NOVO: eventos possíveis por status (simulação real)
+    EVENTOS_POR_STATUS = {
+        'CRIADO': [
+            'Pedido criado no sistema.',
+            'Pagamento confirmado.',
+        ],
+        'COLETADO': [
+            'Pedido coletado pela transportadora.',
+            'Saiu do centro de distribuição.',
+        ],
+        'TRANSITO': [
+            'Pedido em trânsito.',
+            'Pedido passou por centro logístico.',
+            'Pedido a caminho do destino.',
+        ],
+        'ENTREGUE': [
+            'Pedido entregue ao destinatário.',
+        ],
+        'ATRASADO': [
+            'Pedido atrasado devido a condições climáticas.',
+            'Pedido retido para verificação.',
+        ],
+    }
+
     # --- LÓGICA AUTOMÁTICA ---
     def save(self, *args, **kwargs):
-        # 1. Detecta se é criação ou edição
         is_new = self.pk is None
         old_status = None
 
         if not is_new:
-            # Busca o status antigo no banco para comparar
             old_instance = Pedido.objects.get(pk=self.pk)
             old_status = old_instance.status
 
-        # 2. Gera código único se não existir (Ex: LP-A1B2C3)
+        # Gera código automático
         if not self.codigo:
             self.codigo = "LP-" + str(uuid.uuid4()).upper()[:8]
 
-        # 3. Salva o Pedido
         super().save(*args, **kwargs)
 
-        # 4. Cria Eventos na Timeline Automaticamente
+        # 🔹 Criação automática de eventos de rastreio
         if is_new:
             EventoRastreio.objects.create(
-                pedido=self, 
+                pedido=self,
                 descricao="Pedido criado no sistema."
             )
         elif self.status != old_status:
-            # Se o status mudou, registra o evento
-            EventoRastreio.objects.create(
-                pedido=self, 
-                descricao=f"Status atualizado para: {self.get_status_display()}"
-            )
+            eventos = self.EVENTOS_POR_STATUS.get(self.status, [])
+            if eventos:
+                EventoRastreio.objects.create(
+                    pedido=self,
+                    descricao=random.choice(eventos)
+                )
 
     class Meta:
         ordering = ['-criado_em']
@@ -161,7 +193,7 @@ class EventoRastreio(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-criado_em'] # O mais recente aparece primeiro
+        ordering = ['-criado_em']
 
     def __str__(self):
         return f"{self.pedido.codigo} - {self.descricao}"

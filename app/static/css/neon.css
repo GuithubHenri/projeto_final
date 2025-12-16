@@ -304,3 +304,27 @@ body {
     font-weight: bold;
     font-size: 1.1em;
 }
+/* Exemplo de Estilo para o Botão de Ação */
+.btn-action-neon {
+    background: #007bff; /* Azul base */
+    color: #fff;
+    padding: 10px 20px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px #007bff, 0 0 10px #007bff; /* Efeito Neon */
+}
+
+.btn-action-neon:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+    box-shadow: 0 0 10px #007bff, 0 0 20px #007bff;
+}
+
+.btn-action-neon i {
+    margin-right: 8px;
+}

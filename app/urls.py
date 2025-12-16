@@ -14,4 +14,5 @@ urlpatterns = [
     path('admin-area/', views.area_admin, name='area_admin'),
     path('gestor/', views.area_gestor, name='area_gestor'),
     path('usuario/', views.area_usuario, name='area_usuario'),
+    path('gerar-pacote/', views.gerar_pacote_aleatorio, name='gerar_pacote_aleatorio'),
 ]

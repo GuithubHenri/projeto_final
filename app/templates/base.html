@@ -6,59 +6,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LoadPro • Sistema de Logística{% endblock %}</title>
 
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
+    <!-- CSS principal -->
     <link rel="stylesheet" href="{% static 'css/neon.css' %}">
 
-    <style>
-        /* CSS de Emergência para não ficar tudo branco se o neon.css falhar */
-        body { background-color: #0d0d0d; color: white; font-family: 'Inter', sans-serif; }
-        a { color: #00d4ff; text-decoration: none; }
-    </style>
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
 
-    <header style="padding: 20px; border-bottom: 1px solid #333;">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="font-family: 'Orbitron', sans-serif; color: #00d4ff; margin: 0;">LOAD<span>PRO</span></h1>
+<header class="neon-header">
+    <div class="container">
+        <h1 class="logo">
+            LOAD<span>PRO</span>
+        </h1>
 
-            <nav>
-                <ul style="list-style: none; display: flex; gap: 15px; margin: 0;">
-                    <li><a href="{% url 'home' %}">Início</a></li>
-                    <li><a href="{% url 'consulta' %}">Rastreio</a></li>
-                  
-                    {% if user.is_authenticated %}
-                      <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                      <li><a href="{% url 'meus_pedidos' %}">Meus Pedidos</a></li>
-                      <li>
-                        <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" style="background:none; border:none; color: #ff0055; cursor:pointer;">Sair</button>
-                        </form>
-                      </li>
-                    {% else %}
-                      <li><a href="{% url 'login' %}">Login</a></li>
+        <nav>
+            <ul class="menu">
+                <li><a href="{% url 'home' %}">Início</a></li>
+                <li><a href="{% url 'consulta' %}">Rastreio</a></li>
+
+                {% if user.is_authenticated %}
+
+               
+                <li><a href="{% url 'dashboard' %}" id="dashboard">Dashboard</a></li>
+         
+
+                    {# Meus pedidos: apenas CLIENTE #}
+                    {% if user.perfil.nivel == 'CLIENTE' %}
+                        <li><a href="{% url 'meus_pedidos' %}">Meus Pedidos</a></li>
                     {% endif %}
-                </ul>
-            </nav>
-        </div>
-    </header>
 
-    <main style="padding: 40px 20px;">
-        {% if messages %}
-            {% for message in messages %}
-                <div style="padding: 10px; background: #333; color: #fff; margin-bottom: 20px; border-radius: 5px;">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+                    <li class="user-info">
+                        <span>
+                            Olá, {{ user.first_name|default:user.username }}
+                        </span>
+                    </li>
 
-        {% block content %}{% endblock %}
-    </main>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-logout">Sair</button>
+                        </form>
+                    </li>
 
-    <footer style="text-align: center; padding: 20px; font-size: 0.8em; color: #666;">
-        <p>© 2025 • LoadPro • Sistema de Logística</p>
-    </footer>
+                {% else %}
+                    <li>
+                        <a href="{% url 'login' %}">
+                            Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="content">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="neon-footer">
+    <p>© 2025 • LoadPro • Sistema de Logística</p>
+</footer>
+
+<script>
+    const IS_USER_ADMIN = "{{ user.perfil.nivel }}" === "ADMIN";
+    // O ideal é envolver isso em um evento que garanta que o DOM foi carregado
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const elementoParaMudar = document.getElementById('dashboard');
+    
+    if (elementoParaMudar) {
+        if (IS_USER_ADMIN) {
+            // Se for Admin, mostra o elemento (ou mantém visível)
+            elementoParaMudar.style.display = 'block'; // ou 'flex', dependendo do seu layout
+        } else {
+            // Se NÃO for Admin, esconde
+            elementoParaMudar.style.display = 'none';
+        }
+    }
+});
+</script>
 
 </body>
 </html>
