@@ -1,16 +1,73 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Criar conta</h2>
+<div class="auth-container">
+  <div class="auth-card">
 
-<form method="post">
-    {% csrf_token %}
+    <h1>Criar conta</h1>
+    <p class="subtitle">Cadastro rápido e gratuito</p>
 
-    <input type="text" name="username" placeholder="Usuário" required>
-    <input type="email" name="email" placeholder="Email">
-    <input type="password" name="password" placeholder="Senha" required>
+    <form method="post" novalidate>
+      {% csrf_token %}
 
-    <button type="submit">Cadastrar</button>
-</form>
+      <div class="input-group">
+        <label>Usuário</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+          <small class="field-error">
+            {{ form.username.errors.0 }}
+          </small>
+        {% endif %}
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <small class="field-error">
+            {{ form.email.errors.0 }}
+          </small>
+        {% endif %}
+      </div>
+
+      <div class="input-group">
+        <label>Senha</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+          <small class="field-error">
+            {{ form.password1.errors.0 }}
+          </small>
+        {% endif %}
+      </div>
+
+      <div class="input-group">
+        <label>Confirmar senha</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+          <small class="field-error">
+            {{ form.password2.errors.0 }}
+          </small>
+        {% endif %}
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="error-box">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <button type="submit" class="btn-primary">
+        Cadastrar
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <a href="{% url 'login' %}">Já tenho conta</a>
+    </div>
+
+  </div>
+</div>
 
 {% endblock %}
