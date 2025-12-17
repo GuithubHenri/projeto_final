@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import uuid
-import random  # 🔹 NOVO: para simular rastreio real
+import random
 
 
 # ==========================
-# PERFIL DO USUÁRIO (NÍVEL)
+# PERFIL
 # ==========================
 
 class Perfil(models.Model):
@@ -22,7 +22,6 @@ class Perfil(models.Model):
         on_delete=models.CASCADE,
         related_name='perfil'
     )
-
     nivel = models.CharField(
         max_length=20,
         choices=NIVEL_CHOICES,
@@ -36,14 +35,9 @@ class Perfil(models.Model):
 @receiver(post_save, sender=User)
 def criar_perfil(sender, instance, created, **kwargs):
     if created:
-        if instance.is_superuser:
-            nivel = 'ADMIN'
-        else:
-            nivel = 'USER'
-
         Perfil.objects.create(
             usuario=instance,
-            nivel=nivel
+            nivel='ADMIN' if instance.is_superuser else 'USER'
         )
 
 
@@ -59,11 +53,9 @@ class Cliente(models.Model):
         null=True,
         blank=True
     )
-
     nome = models.CharField(max_length=100)
     email = models.EmailField()
     telefone = models.CharField(max_length=20, blank=True)
-
     criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -116,52 +108,40 @@ class Pedido(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
-    # 🔹 NOVO: eventos possíveis por status (simulação real)
     EVENTOS_POR_STATUS = {
-        'CRIADO': [
-            'Pedido criado no sistema.',
-            'Pagamento confirmado.',
-        ],
-        'COLETADO': [
-            'Pedido coletado pela transportadora.',
-            'Saiu do centro de distribuição.',
-        ],
+        'CRIADO': ['Pedido criado no sistema.', 'Pagamento confirmado.'],
+        'COLETADO': ['Pedido coletado pela transportadora.'],
         'TRANSITO': [
             'Pedido em trânsito.',
             'Pedido passou por centro logístico.',
-            'Pedido a caminho do destino.',
+            'Pedido a caminho do destino.'
         ],
-        'ENTREGUE': [
-            'Pedido entregue ao destinatário.',
-        ],
+        'ENTREGUE': ['Pedido entregue ao destinatário.'],
         'ATRASADO': [
             'Pedido atrasado devido a condições climáticas.',
-            'Pedido retido para verificação.',
+            'Pedido retido para verificação.'
         ],
     }
 
-    # --- LÓGICA AUTOMÁTICA ---
     def save(self, *args, **kwargs):
         is_new = self.pk is None
         old_status = None
 
         if not is_new:
-            old_instance = Pedido.objects.get(pk=self.pk)
-            old_status = old_instance.status
+            old_status = Pedido.objects.get(pk=self.pk).status
 
-        # Gera código automático
         if not self.codigo:
             self.codigo = "LP-" + str(uuid.uuid4()).upper()[:8]
 
         super().save(*args, **kwargs)
 
-        # 🔹 Criação automática de eventos de rastreio
+        # 🔹 Criação automática do histórico
         if is_new:
             EventoRastreio.objects.create(
                 pedido=self,
                 descricao="Pedido criado no sistema."
             )
-        elif self.status != old_status:
+        elif old_status != self.status:
             eventos = self.EVENTOS_POR_STATUS.get(self.status, [])
             if eventos:
                 EventoRastreio.objects.create(
@@ -179,7 +159,7 @@ class Pedido(models.Model):
 
 
 # ==========================
-# EVENTOS DE RASTREAMENTO
+# EVENTOS DE RASTREIO
 # ==========================
 
 class EventoRastreio(models.Model):
@@ -188,12 +168,13 @@ class EventoRastreio(models.Model):
         on_delete=models.CASCADE,
         related_name='eventos'
     )
-
     descricao = models.CharField(max_length=255)
     criado_em = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-criado_em']
+        verbose_name = 'Evento de Rastreio'
+        verbose_name_plural = 'Eventos de Rastreio'
 
     def __str__(self):
         return f"{self.pedido.codigo} - {self.descricao}"

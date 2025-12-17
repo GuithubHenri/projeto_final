@@ -11,12 +11,12 @@
         <h2 style="font-family: 'Orbitron'; margin-bottom: 10px; color: #fff; font-size: 1.2em;">
             Ações de Gerenciamento
         </h2>
-        
+
         <a href="{% url 'gerar_pacote_aleatorio' %}" class="btn btn-action-neon">
             <i class="fas fa-random"></i> Gerar Pacote Aleatório (Simulação)
         </a>
-        
-        </div>
+    </div>
+
     <div class="dashboard-cards">
 
         <div class="neon-card">
@@ -55,6 +55,7 @@
                         <th>CLIENTE</th>
                         <th>STATUS</th>
                         <th>ATUALIZADO</th>
+                        <th>AÇÕES</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,6 +64,7 @@
                         <tr>
                             <td class="col-codigo">{{ pedido.codigo }}</td>
                             <td>{{ pedido.cliente.nome }}</td>
+
                             <td>
                                 {% if pedido.status == 'ENTREGUE' %}
                                     <span style="color: #22c55e; font-weight: bold;">
@@ -78,13 +80,38 @@
                                     </span>
                                 {% endif %}
                             </td>
+
                             <td style="color: #9ca3af;">
                                 {{ pedido.atualizado_em|date:"d/m/Y H:i" }}
                             </td>
+
+                            <td>
+                                <form method="POST"
+                                      action="{% url 'alterar_status_pedido' pedido.id %}"
+                                      style="display: flex; gap: 6px; align-items: center;">
+                                    {% csrf_token %}
+
+                                    <select name="status"
+                                            style="background:#020617; color:#fff; border:1px solid #0ea5e9; padding:4px;">
+                                        {% for key, label in pedido.STATUS_CHOICES %}
+                                            <option value="{{ key }}"
+                                                {% if pedido.status == key %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <button type="submit"
+                                            style="background:#0ea5e9; color:#000; padding:4px 10px; border:none; cursor:pointer;">
+                                        Atualizar
+                                    </button>
+                                </form>
+                            </td>
+
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="4" style="text-align: center; padding: 30px; color: #666;">
+                            <td colspan="5" style="text-align: center; padding: 30px; color: #666;">
                                 Nenhum pedido encontrado.
                             </td>
                         </tr>

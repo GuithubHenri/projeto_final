@@ -4,8 +4,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from django.http import HttpResponseForbidden
+from .forms import CadastroForm
+from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Pedido, Cliente
+from .models import Pedido, Cliente, EventoRastreio
 import random
 
 
@@ -35,7 +37,7 @@ def consulta(request):
 # ==========================
 
 def login_view(request):
-    # 🔹 impede usuário logado de voltar ao login
+    # impede usuário logado de voltar ao login
     if request.user.is_authenticated:
         if hasattr(request.user, 'perfil'):
             if request.user.perfil.nivel in ['ADMIN', 'GESTOR']:
@@ -43,24 +45,20 @@ def login_view(request):
             return redirect('meus_pedidos')
         return redirect('home')
 
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+    form = AuthenticationForm(request, data=request.POST or None)
 
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
+    if request.method == 'POST' and form.is_valid():
+        user = form.get_user()
+        login(request, user)
 
-            if hasattr(user, 'perfil'):
-                if user.perfil.nivel in ['ADMIN', 'GESTOR']:
-                    return redirect('dashboard')
-                return redirect('meus_pedidos')
+        if hasattr(user, 'perfil'):
+            if user.perfil.nivel in ['ADMIN', 'GESTOR']:
+                return redirect('dashboard')
+            return redirect('meus_pedidos')
 
-            return redirect("home")
+        return redirect('home')
 
-        messages.error(request, "Usuário ou senha inválidos.")
-
-    return render(request, "registration/login.html")
+    return render(request, 'registration/login.html', {'form': form})
 
 
 def logout_view(request):
@@ -70,38 +68,30 @@ def logout_view(request):
 
 def cadastro_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        form = CadastroForm(request.POST)
 
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Este nome de usuário já existe.')
-            return redirect('cadastro')
+        if form.is_valid():
+            user = form.save()
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
+            # adiciona ao grupo CLIENTE (opcional)
+            try:
+                grupo_cliente = Group.objects.get(name='CLIENTE')
+                user.groups.add(grupo_cliente)
+            except Group.DoesNotExist:
+                pass
 
-        # adiciona ao grupo CLIENTE (opcional, mas ok)
-        try:
-            grupo_cliente = Group.objects.get(name='CLIENTE')
-            user.groups.add(grupo_cliente)
-        except Group.DoesNotExist:
-            pass
+            Cliente.objects.create(
+                usuario=user,
+                nome=user.username,
+                email=user.email
+            )
 
-        Cliente.objects.create(
-            usuario=user,
-            nome=username,
-            email=email
-        )
+            messages.success(request, 'Conta criada com sucesso! Faça login.')
+            return redirect('login')
+    else:
+        form = CadastroForm()
 
-        messages.success(request, 'Conta criada com sucesso! Faça login.')
-        return redirect('login')
-
-    return render(request, 'registration/cadastro.html')
-
+    return render(request, 'registration/cadastro.html', {'form': form})
 
 # ==========================
 # VIEWS RESTRITAS
@@ -199,3 +189,18 @@ def gerar_pacote_aleatorio(request):
     
     # Redireciona para a tela de consulta para ver o pacote gerado
     return redirect(f'/consulta/?codigo={novo_pedido.codigo}')
+@login_required
+def alterar_status_pedido(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+
+    # 🔐 Permissão
+    if request.user.perfil.nivel not in ['ADMIN', 'GESTOR']:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        novo_status = request.POST.get('status')
+        pedido.status = novo_status
+        pedido.responsavel = request.user
+        pedido.save()  # <-- cria EventoRastreio automaticamente
+
+    return redirect('dashboard')
