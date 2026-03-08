@@ -1,37 +1,130 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LoadPro - Logística Inteligente</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>LoadPro • Sistema de Logística</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS baseado no seu neon.css que vi na imagem */
+        :root {
+            --neon-blue: #00f2ff;
+            --bg-dark: #0a0a0b;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .neon-header {
+            border-bottom: 2px solid var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .logo span {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .menu a:hover {
+            color: var(--neon-blue);
+            text-shadow: 0 0 8px var(--neon-blue);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .hero h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #ccc;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .btn-rastreio {
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 15px 40px;
+            font-family: 'Orbitron', sans-serif;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 0 10px var(--neon-blue);
+            transition: 0.3s;
+        }
+
+        .btn-rastreio:hover {
+            background: var(--neon-blue);
+            color: #000;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
-    <div class="min-h-screen flex flex-col justify-center items-center p-6">
-        
-        <header class="text-center mb-12">
-            <h1 class="text-6xl font-extrabold text-blue-600 tracking-tight mb-4">LoadPro</h1>
-            <p class="text-xl text-slate-500 max-w-2xl mx-auto">
-                A revolução na comunicação logística. Sistema de rastreamento de encomendas rápido, transparente e assíncrono.
-            </p>
-        </header>
+<body>
 
-        <main class="bg-white p-8 rounded-2xl shadow-xl max-w-3xl w-full border border-slate-100 text-center">
-            <h2 class="text-2xl font-bold mb-4 text-slate-800">Prova de Conceito (PoC)</h2>
-            <p class="text-slate-600 mb-6">
-                Este projeto é parte da entrega do Projeto Integrador. O LoadPro permite o cadastro ágil de pacotes e o rastreio simplificado para o cliente final.
-            </p>
-            
-            <div class="flex justify-center flex-wrap gap-3 mt-8">
-                <span class="bg-blue-50 text-blue-700 text-sm font-semibold px-4 py-1 rounded-full">Django Backend</span>
-                <span class="bg-emerald-50 text-emerald-700 text-sm font-semibold px-4 py-1 rounded-full">SQLite Database</span>
-                <span class="bg-purple-50 text-purple-700 text-sm font-semibold px-4 py-1 rounded-full">HTML/CSS</span>
-            </div>
-        </main>
+    <header class="neon-header">
+        <div class="container">
+            <h1 class="logo">LOAD<span>PRO</span></h1>
+            <nav>
+                <ul class="menu">
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Rastreio</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-        <footer class="mt-16 text-slate-400 text-sm font-medium">
-            &copy; 2026 Equipe LoadPro - Projeto Integrador
-        </footer>
-    </div>
+    <main class="hero">
+        <h2>Logística Inteligente</h2>
+        <p>A revolução na comunicação logística. Sistema de rastreamento de encomendas rápido, transparente e assíncrono.</p>
+        <a href="#" class="btn-rastreio">RASTREAR AGORA</a>
+    </main>
+
 </body>
 </html>
